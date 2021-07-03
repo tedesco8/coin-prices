@@ -11,6 +11,8 @@ import CoinItem from "./components/CoinItem";
 
 function App() {
   const [coins, setCoins] = useState([]);
+  const [search, setSearch] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   const loadData = async () => {
     //https://www.coingecko.com/es/api#explore-api
     const res = await fetch(
@@ -30,15 +32,30 @@ function App() {
       <StatusBar backgroundColor="#141414" />
       <View style={styles.header}>
         <Text style={styles.title}>Coin Prices</Text>
-        <TextInput style={styles.searchInput} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search a Coin"
+          placeholderTextColor="#858585"
+          onChangeText={(text) => setSearch(text)}
+        />
       </View>
       <FlatList
         style={styles.list}
-        data={coins}
+        data={coins.filter(
+          (coin) =>
+            coin.name.toLowerCase().includes(search.toLowerCase()) |
+            coin.symbol.toLowerCase().includes(search)
+        )}
         renderItem={({ item }) => {
           return <CoinItem coin={item} />;
         }}
         showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={async () => {
+          setRefreshing(true)
+          await loadData()
+          setRefreshing(false)
+        }}
       />
     </View>
   );
@@ -57,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "90%",
-    marginBottom: 10
+    marginBottom: 10,
   },
   title: {
     color: "#fff",
@@ -66,11 +83,11 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     color: "#fff",
-    borderBottomColor: '#4657CE',
+    borderBottomColor: "#4657CE",
     borderBottomWidth: 1,
     width: "40%",
     textAlign: "center",
-  }
+  },
 });
 
 export default App;
