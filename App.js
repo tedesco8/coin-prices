@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, FlatList } from 'react-native'
+import CoinItem from './components/CoinItem'
 
 function App() {
   const [coins, setCoins] = useState([])
@@ -14,14 +15,15 @@ function App() {
     console.log("loaded")
     loadData()
   }, [])
+
+
   return (
     <View style={ styles.container }>
       <Text>Hola desde React Native</Text>
       <FlatList
         data={coins}
         renderItem={({ item }) => {
-          console.log(item.name)
-          return <Text>{item.name}</Text>
+          return <CoinItem coin={item} />
         }}
       />
     </View>
